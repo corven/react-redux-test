@@ -10,9 +10,9 @@ export function handleLogin() {
 
     dispatch({
       type: LOGIN_REQUEST
-    })
+    });
 
-    VK.Auth.login((r) => { // eslint-disable-line no-undef
+    VK.Auth.login((r) => {
       if (r.session) {
         let username = r.session.user.first_name;
 
@@ -28,7 +28,7 @@ export function handleLogin() {
           payload: new Error('Ошибка авторизации')
         })
       }
-    },4); // запрос прав на доступ к photo
+    }, 4); // запрос прав на доступ к photo
   }
 
 }

@@ -4,35 +4,35 @@ import {
   GET_PHOTOS_SUCCESS
 } from '../constants/Page'
 
-let photosArr = []
-let cached = false
+let photosArr = [];
+let cached = false;
 
 function makeYearPhotos(photos, selectedYear) {
-  let createdYear, yearPhotos = []
+  let createdYear, yearPhotos = [];
 
   photos.forEach((item) => {
-    createdYear = new Date(item.created*1000).getFullYear()
+    createdYear = new Date(item.created * 1000).getFullYear();
     if (createdYear === selectedYear ) {
       yearPhotos.push(item)
     }
-  })
+  });
 
-  yearPhotos.sort((a,b) => b.likes.count-a.likes.count);
+  yearPhotos.sort((a,b) => b.likes.count - a.likes.count);
 
-  return yearPhotos
+  return yearPhotos;
 }
 
 function getMorePhotos(offset, count, year, dispatch) {
-  VK.Api.call('photos.getAll', {extended:1, count: count, offset: offset},(r) => { // eslint-disable-line no-undef
+  VK.Api.call('photos.getAll', {extended: 1, count: count, offset: offset},(r) => {
     try {
       if (offset <= r.response[0] - count) {
-        offset+=count;
-        photosArr = photosArr.concat(r.response)
-        getMorePhotos(offset,count,year,dispatch)
+        offset += count;
+        photosArr = photosArr.concat(r.response);
+        getMorePhotos(offset, count, year, dispatch)
       } else {
-        photosArr = photosArr.concat(r.response)
-        let photos = makeYearPhotos(photosArr, year)
-        cached = true
+        photosArr = photosArr.concat(r.response);
+        let photos = makeYearPhotos(photosArr, year);
+        cached = true;
         dispatch({
           type: GET_PHOTOS_SUCCESS,
           payload: photos
@@ -56,17 +56,16 @@ export function getPhotos(year) {
     dispatch({
       type: GET_PHOTOS_REQUEST,
       payload: year
-    })
+    });
 
     if (cached) {
-      let photos = makeYearPhotos(photosArr, year)
+      let photos = makeYearPhotos(photosArr, year);
       dispatch({
         type: GET_PHOTOS_SUCCESS,
         payload: photos
       })
     } else {
-      getMorePhotos(0,200,year,dispatch)
+      getMorePhotos(0, 200, year, dispatch)
     }
-
   }
 }
